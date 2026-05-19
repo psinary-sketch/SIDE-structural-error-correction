@@ -1,0 +1,6 @@
+name = "SIDEStructuralErrorCorrection"
+version = "0.1.0"
+defaultTargets = ["SIDEStructuralErrorCorrection"]
+
+[[lean_lib]]
+name = "SIDEStructuralErrorCorrection"
