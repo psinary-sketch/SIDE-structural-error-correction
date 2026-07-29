@@ -119,4 +119,24 @@ theorem fano_collapsed_line_rejected :
     dealignedCheck (fun p => if p.val = 1 ∨ p.val = 3 then ⟨0, by decide⟩ else p) = false := by
   decide
 
+/-! ### The incidence structure, certified rather than asserted -/
+
+/-- Membership of a position in a line, as a Boolean for the finite check. -/
+def onLine (L : Line (Fin 7)) (p : Fin 7) : Bool :=
+  p == L.a || p == L.b || p == L.c
+
+/-- The seven position indices, doubling as the seven line indices. -/
+def allSeven : List (Fin 7) := [0, 1, 2, 3, 4, 5, 6]
+
+/-- How many lines contain both `p` and `q`. -/
+def pairCount (p q : Fin 7) : Nat :=
+  allSeven.countP (fun i => onLine (fanoLines i) p && onLine (fanoLines i) q)
+
+/-- **`fanoLines` really is the Fano plane.** Every pair of distinct
+    positions lies on exactly one line — the 2-(7,3,1) property, verified
+    by evaluation rather than asserted in a docstring. The protection
+    theorem above is general over any line family; this certifies that the
+    family used here is the incidence structure claimed. -/
+theorem fano_two_design : ∀ p q : Fin 7, p ≠ q → pairCount p q = 1 := by decide
+
 end DeAlignment
