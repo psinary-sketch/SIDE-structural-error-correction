@@ -23,7 +23,8 @@
   verification apparatus itself are outside this theorem and belong to
   the threat model.
 
-  Vanilla Lean 4; no Mathlib; expected axiom-free.
+  Vanilla Lean 4; no Mathlib; the incidence-structure declarations (allSeven, pairCount, fano_two_design) depend on
+  propext, the rest on no axioms.
 -/
 
 namespace DeAlignment
@@ -69,9 +70,8 @@ theorem no_domain_covers_line {P D : Type} (d : P → D) (L : Line P)
     exact h1.trans h2.symm
   exact h.1 hab
 
-/-- **The protection theorem.** Under the de-alignment condition, no
-    single-domain failure completes any line — hence no single-domain
-    failure induces a minimum-weight logical operator. -/
+/-- **The protection theorem.** Under the de-alignment condition, no single-domain failure completes any line; read with the [[7,1,3]] code's
+minimum-weight logical operators as the Fano lines (not compiled here), no single-domain failure induces one. -/
 theorem single_domain_fault_not_logical {P D : Type} {n : Nat}
     (d : P → D) (lines : Fin n → Line P)
     (hdea : Dealigned d lines) (k : D) :
@@ -79,9 +79,7 @@ theorem single_domain_fault_not_logical {P D : Type} {n : Nat}
   intro i
   exact no_domain_covers_line d (lines i) (hdea i) k
 
-/-- The converse direction, as the design diagnostic: if two positions of a
-    line share a domain, that domain's failure needs only one further fault
-    to complete the line. Stated as: the line is not de-aligned. -/
+/-- A sufficient condition, as a design rule: an injective assignment of positions to domains de-aligns every proper line. -/
 theorem dealigned_of_lines_injective {P D : Type} (d : P → D) (L : Line P)
     (hinj : ∀ x y : P, d x = d y → x = y) (hp : L.Proper) :
     DealignedAt d L := by
