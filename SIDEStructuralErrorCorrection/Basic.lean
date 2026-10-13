@@ -4,21 +4,17 @@
 
   STRUCTURAL ERROR CORRECTION
 
-  Kernel verification of the Formation Distance Theorem for the Trivium
-  under the formation-block error model:
-
-    d_eff = 2S - 1
-
-  where S is the number of non-dark formation stages.
+  This file defines the Class A formation tuple (2, 3, 2, 0), the non-dark stage count S = 3, and the number d_eff :=
+  2S - 1 (= 5), and checks by evaluation that it exceeds the defined Steane value d_standard := 3; the Formation
+  Distance Theorem and the formation-block error model are the draft's (STRUCTURAL_ERROR_CORRECTION_DRAFT), not
+  compiled here.
 
   For Class A's Trivium with formation tuple (n₁, n₂, n₃, n₄) = (2, 3, 2, 0):
   S = 3 non-dark stages (Primitive, Transformation, Output; the Interface
   stage is dark with n₄ = 0).  Hence d_eff = 2·3 − 1 = 5.
 
   Contrast with the standard per-component error model from SIDE-steane-arithmetic
-  where d = 3 (Steane [[7, 1, 3]]).  The formation-block model gives
-  stronger protection (d_eff = 5 > d = 3) on the same cubit substrate
-  because the structured error model is more constrained.
+  where d = 3 (Steane [[7, 1, 3]]).
 
   Vanilla Lean 4 — no Mathlib dependency.
   Toolchain: leanprover/lean4:v4.29.0-rc8.
@@ -80,7 +76,7 @@ theorem S_eq_three : S = 3 := by decide
 /-- Theorem 2.2.  The Interface stage contributes 0 to S (it is dark). -/
 theorem interface_not_counted : isNonDark interface_size = 0 := by decide
 
-/-- Theorem 2.3.  The three non-dark stages cover all 7 mechanism classes. -/
+/-- Theorem 2.3.  The three non-dark stage sizes sum to the formation total (2 + 3 + 2 = 7, the interface size being 0). -/
 theorem non_dark_covers_seven :
     primitive_size + transformation_size + output_size = formation_total := by decide
 
@@ -90,7 +86,9 @@ theorem non_dark_covers_seven :
   Under the formation-block error model, the effective distance satisfies
   d_eff ≥ 2S − 1, with equality for rank-1 codespace (k = 1).
 
-  This kernel verifies the equality at the structural-formula level.
+  The Formation Distance Theorem (d_eff >= 2S - 1 under the formation-block error model, with equality for rank-1
+  codespace) is the draft's (STRUCTURAL_ERROR_CORRECTION_DRAFT §2.5); this kernel defines d_eff := 2S - 1 and
+  evaluates it (= 5) and does not verify the theorem.
 -/
 
 /-- The effective distance under the formation-block error model. -/
@@ -113,7 +111,8 @@ theorem formation_block_stronger : d_eff > d_standard := by decide
 /-- Theorem 4.2.  The protection improvement is 2 distance levels. -/
 theorem improvement_two : d_eff - d_standard = 2 := by decide
 
-/-- Theorem 4.3.  Maximum correctable error weight under formation-block model. -/
+/-- Maximum correctable error weight under the formation-block model, defined as (d_eff - 1) / 2; its value 2 is
+max_correctable_two. -/
 def max_correctable_weight : Nat := (d_eff - 1) / 2
 
 theorem max_correctable_two : max_correctable_weight = 2 := by decide
@@ -133,11 +132,12 @@ theorem max_correctable_standard : (d_standard - 1) / 2 = 1 := by decide
 /-- Complementary weight under stage complementarity. -/
 def complement_weight (w : Nat) : Nat := S - w
 
-/-- Theorem 5.1.  Stage complementarity for S = 3:
-    weight 2 errors are K-L equivalent to weight 1 errors. -/
+/-- Theorem 5.1.  For S = 3 the complementary index of weight 2 is weight 1 (the K-L equivalence this index stands for is the draft's,
+not compiled). -/
 theorem complementarity_weight_2 : complement_weight 2 = 1 := by decide
 
-/-- Theorem 5.2.  Weight 1 errors are K-L equivalent to weight 2 errors (symmetric). -/
+/-- Theorem 5.2.  For S = 3 the complementary index of weight 1 is weight 2 (symmetric); the K-L equivalence is the draft's, not
+compiled. -/
 theorem complementarity_weight_1 : complement_weight 1 = 2 := by decide
 
 /-- Theorem 5.3.  Weight 0 (no error) is complementary to weight S (full corruption). -/
@@ -149,12 +149,9 @@ theorem full_corruption_complement : complement_weight S = 0 := by decide
 
 /-! ## §6. Tightness for Rank-1 Codespace
 
-  **Tightness Theorem.** d_eff = 2S − 1 exactly for formation codes
-  with rank-1 codespace (k = 1) and S ≤ 3 non-dark stages.
-
-  The rank-1 condition holds for the Trivium because the codespace
-  is span{v̂} with v̂ = v/√12, a single vector.  The Spectral Volume
-  λ = 12 is the unique non-zero eigenvalue of M = v†v.
+  **Tightness Theorem.** The draft's Tightness Theorem (d_eff = 2S - 1 for rank-1 codespace and S <= 3) and its rank-1 reading of the Trivium
+  codespace are manuscript-resident; this section defines k_logical := 1 and checks S <= 3 and the defining equation
+  of d_eff.
 -/
 
 /-- The number of logical qubits encoded in the Trivium code. -/
@@ -182,7 +179,7 @@ def S_universal_max : Nat := 3
 
 theorem S_within_universal_max : S ≤ S_universal_max := by decide
 
-/-- Theorem 7.1.  The universal upper bound on d_eff. -/
+/-- The programme's proposed upper bound on d_eff, defined as 2 * S_universal_max - 1 (= 5) from the observed n4 = 0. -/
 def d_eff_universal_max : Nat := 2 * S_universal_max - 1
 
 theorem d_eff_universal_max_eq_five : d_eff_universal_max = 5 := by decide
@@ -202,8 +199,7 @@ theorem spectral_volume_eq_twelve : spectral_volume = 12 := by decide
 theorem spectral_d_eff_relation :
     d_eff * (d_eff - 1) = spectral_volume + 8 := by decide
 
-/-- Theorem 8.2.  d_eff bounds the dimensionality of the dark subspace
-    via d_eff + (formation_total − 1 − d_eff) = formation_total − 1 = 6.
+/-- The dark subspace dimension, defined as formation_total - 1 (= 6, dark_subspace_eq_six).
     The dark subspace dimension is 6 = ‖v‖² − 2·max_correctable − 2. -/
 def dark_subspace_dim : Nat := formation_total - 1
 
@@ -215,9 +211,8 @@ theorem cubit_substrate_connection :
 
 /-! ## §9. The Silence-as-Protection Principle -/
 
-/-- The Silence Principle: independent stages with κ = 0 interfaces
-    cannot propagate errors between stages.  Each non-dark stage is
-    an independent error compartment.  In structural terms:
+/-- The number of independent error compartments, defined as S (the Silence Principle reading each non-dark stage as an
+independent compartment is the corpus's, not compiled).  In structural terms:
     number of independent compartments = S = number of non-dark stages. -/
 def num_compartments : Nat := S
 
